@@ -35,8 +35,24 @@ function populateExplore(indexData) {
 
     let explore = document.body.getElementsByClassName("main-list")[0];
     populateDir(indexData, explore)
+    setEventListeners()
 }
 
 fetch("../lib/buford2/index.json")
     .then(res => res.json())
     .then(populateExplore)
+
+// set event listeners for collapsibles
+function setEventListeners() {
+    let colls = document.getElementsByClassName("collapsible");
+
+    for (let i = 0; i < colls.length; i++) {
+        console.log(colls[i])
+        colls[i].addEventListener("click", () => {
+            colls[i].classList.toggle("active");
+            let dropdown = colls[i].nextElementSibling
+            if (dropdown.style.display === "none") dropdown.style.display = "block" 
+            else dropdown.style.display = "none";
+        });
+    };
+}
