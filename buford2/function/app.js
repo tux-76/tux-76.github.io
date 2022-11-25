@@ -9,7 +9,7 @@ console.log("Function:", funcName);
 
 function createInput(name, type) {
     let el = document.createElement('li');
-    el.innerHTML = `<input class="param" type="${type}"></input> <span class="li-title">${name}</span>`;
+    el.innerHTML = `<input class="param" type="${type}" spellcheck=false></input> <span class="li-title">${name}</span>`;
     return el;
 }
 
@@ -63,6 +63,7 @@ function makePage(json) {
 
     // set things
     document.querySelector("body > .title").textContent = func.name;
+    document.head.children[0].textContent = func.name;
     document.querySelector(".description > p").textContent = func.desc;
     let inputList = document.querySelector(".run > ol");
     func.inputs.forEach((inName, i) => {

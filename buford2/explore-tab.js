@@ -1,5 +1,4 @@
 // -------------------------------------poplulate explore tab
-
 function makeDirElement(name) {
     let el = document.createElement('li');
     el.innerHTML = `<button class="collapsible">${name}</button><ul class="dropdown-list"></ul>`;
@@ -23,11 +22,25 @@ function populateDir(jsonDir, appendTo) {
         } else if (jsonItem.type === "func") {
             let newEl = makeFuncElement(jsonItem.name);
 
-            newEl.children[0].href = `./function/?func=${key}`;
+            newEl.children[0].href = `${basePath}function/?func=${key}`;
 
             appendTo.appendChild(newEl);
         }
     }
+}
+
+// set event listeners for collapsibles
+function setEventListeners() {
+    let colls = document.getElementsByClassName("collapsible");
+
+    for (let i = 0; i < colls.length; i++) {
+        colls[i].addEventListener("click", () => {
+            colls[i].classList.toggle("active");
+            let dropdown = colls[i].nextElementSibling
+            if (dropdown.style.display === "none") dropdown.style.display = "block" 
+            else dropdown.style.display = "none";
+        });
+    };
 }
 
 function populateExplore(indexData) {
@@ -38,21 +51,14 @@ function populateExplore(indexData) {
     setEventListeners()
 }
 
+let basePath = "./";
+
 fetch("../lib/buford2/index.json")
     .then(res => res.json())
     .then(populateExplore)
-
-// set event listeners for collapsibles
-function setEventListeners() {
-    let colls = document.getElementsByClassName("collapsible");
-
-    for (let i = 0; i < colls.length; i++) {
-        console.log(colls[i])
-        colls[i].addEventListener("click", () => {
-            colls[i].classList.toggle("active");
-            let dropdown = colls[i].nextElementSibling
-            if (dropdown.style.display === "none") dropdown.style.display = "block" 
-            else dropdown.style.display = "none";
-        });
-    };
-}
+    .catch((err) => {
+        basePath = "../"
+        fetch("../../lib/buford2/index.json")
+        .then(res => res.json())
+        .then(populateExplore)
+    })
