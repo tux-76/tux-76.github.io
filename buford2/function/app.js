@@ -1,4 +1,4 @@
-import * as bu2 from "../../lib/buford2/main.js"
+import bu2 from "../../lib/buford2/main.js"
 
 // get function
 const queryString = window.location.search;
@@ -17,27 +17,49 @@ function createInput(name, type) {
 // calculate input
 function calculateInput(inputElements) {
     let values = [];
-    for (let el in inputElements) values.push(el);
+    for (let i = 0; i < inputElements.length; i++) values.push(inputElements[i].value);
 
     values = values.map(val => {
         return val
     });
+    console.log("=====================Calculate=====================\n", values);
 
-    console.log("Calculate", inputElements, bu2.alge)
+    let output = bu2Func(...values);
+    document.querySelector("body > .output > .out").textContent = output;
+
+    console.log("Calculation output:", output);
+    return output;
 }
 
 // make page
+let func;
+let bu2Func = bu2;
 function makePage(json) {
     // find function
-    let func;
+    let dynamicDir = [];
+    let funcKeys;
     function findFunction(dir) {
         for (const key in dir) {
-            if (dir[key].type === "func" && key === funcName) func = dir[key];
-            else if (dir[key].type === "dir") findFunction(dir[key])
+            if (dir[key].type === "func" && key === funcName) {
+                dynamicDir.push(key);
+                func = dir[key];
+                funcKeys = dynamicDir.slice();
+            } else if (dir[key].type === "dir") {
+                dynamicDir.push(key);
+                findFunction(dir[key]);
+                dynamicDir.splice(dynamicDir.length-1, 1);
+            }
         }
     }
     findFunction(json);
+    console.log("Function path:", funcKeys);
     console.log("Function JSON:", func);
+
+    //get real function
+    funcKeys.forEach(directory => {
+        bu2Func = bu2Func[directory];
+    });
+    console.log("Actual function", bu2Func);
 
     // set things
     document.querySelector("body > .title").textContent = func.name;
