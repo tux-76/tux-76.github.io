@@ -1,7 +1,10 @@
 // -------------------------------------poplulate explore tab
 function makeDirElement(name) {
     let el = document.createElement('li');
-    el.innerHTML = `<button class="collapsible">${name}</button><ul class="dropdown-list"></ul>`;
+    if (basePath === "./")
+        el.innerHTML = `<button class="collapsible">${name}</button><ul class="dropdown-list"></ul>`;
+    else
+        el.innerHTML = `<button class="collapsible">${name}</button><ul class="dropdown-list"></ul>`;
     return el;
 }
 function makeFuncElement(name) {
@@ -37,9 +40,10 @@ function setEventListeners() {
         colls[i].addEventListener("click", () => {
             colls[i].classList.toggle("active");
             let dropdown = colls[i].nextElementSibling
-            if (dropdown.style.display === "none") dropdown.style.display = "block" 
+            if (dropdown.style.display === "none") dropdown.style.display = "block";
             else dropdown.style.display = "none";
         });
+        if (basePath !== "./") colls[i].nextElementSibling.style.display = "none";
     };
 }
 

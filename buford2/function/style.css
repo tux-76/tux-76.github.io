@@ -7,5 +7,20 @@
 }
 
 .output > .out {
+    font-family: monospace;
     margin-left:20px;
+}
+
+body > .deets {
+    border-color:white;
+    border-style:inset;
+    border-width:1px;
+}
+
+body > .deets > ul > li {
+    color: gray;
+}
+
+body > .deets > ul > li > .fill {
+    font-family: monospace;
 }

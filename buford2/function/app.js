@@ -14,30 +14,60 @@ function createInput(name, type) {
 }
 
 
+function fillFunctionInPage() {
+    //set titles
+    document.querySelector("body > .title").textContent = func.name;
+    document.head.children[0].textContent = func.name;
+    //set description
+    document.querySelector(".description > p").textContent = func.desc;
+    //set inputs
+    let inputList = document.querySelector(".run > ol");
+    func.inputs.forEach((inName, i) => {
+        inputList.append(createInput(inName, func.inTypes[i]));
+    });
+    //set deets
+    let deets = document.querySelectorAll("body > .deets > ul > li > .fill");
+    deets[0].textContent = funcKeys[funcKeys.length-1];
+    deets[1].textContent = `bu2.${funcKeys.join(".")}()`;
+    deets[2].textContent = `Buford2.${funcKeys.join(".")} / bu2.${funcKeys.join(".")}`;
+    deets[3].textContent = func.inTypes.join(", ");
+}
+
 // calculate input
 function calculateInput(inputElements) {
     let values = [];
     for (let i = 0; i < inputElements.length; i++) values.push(inputElements[i].value);
 
+    values = values.filter(e => e !== "");
     values = values.map(val => {
-        return val
+        val.toLowerCase();
+        if (!isNaN(val)) return parseFloat(val);
+        else if (val === "true") return true;
+        else if (val === "false") return false;
+        else return val;
     });
+
+    document.querySelectorAll("body > .deets > ul > li > .fill")[3].textContent = `bu2.${funcKeys.join(".")}(${values.map(val => (typeof val === "string") ? `"${val}"` : val).join(", ")})`
+
     console.log("=====================Calculate=====================\n", values);
+    let output = bu2Func(...values)
+    if (output instanceof Array) output = output.map(out => {
+        if (out instanceof Array) return `(${out.join(", ")})`;
+        else return out;
+    }).join(" ");
 
-    let output = bu2Func(...values);
     document.querySelector("body > .output > .out").textContent = output;
-
     console.log("Calculation output:", output);
     return output;
 }
 
 // make page
 let func;
+let funcKeys;
 let bu2Func = bu2;
 function makePage(json) {
     // find function
     let dynamicDir = [];
-    let funcKeys;
     function findFunction(dir) {
         for (const key in dir) {
             if (dir[key].type === "func" && key === funcName) {
@@ -62,13 +92,7 @@ function makePage(json) {
     console.log("Actual function", bu2Func);
 
     // set things
-    document.querySelector("body > .title").textContent = func.name;
-    document.head.children[0].textContent = func.name;
-    document.querySelector(".description > p").textContent = func.desc;
-    let inputList = document.querySelector(".run > ol");
-    func.inputs.forEach((inName, i) => {
-        inputList.append(createInput(inName, func.inTypes[i]));
-    });
+    fillFunctionInPage()
 
     // set event listeners
     let inputElements = document.querySelectorAll(".run > ol li > .param");
@@ -89,5 +113,3 @@ function makePage(json) {
 fetch("../../lib/buford2/index.json")
     .then(res => res.json())
     .then(makePage);
-
-
