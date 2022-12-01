@@ -64,5 +64,5 @@ fetch("../lib/buford2/index.json")
         basePath = "../"
         fetch("../../lib/buford2/index.json")
         .then(res => res.json())
-        .then(populateExplore)
-    })
+        .then(populateExplore);
+    });

@@ -1,0 +1,6 @@
+[
+    {"name":"Tux76", "link":"./"},
+    {"name":"Home", "link":"./buford2"},
+    {"name":"Solve Equation", "link":"./buford2/function/?func=doubleSidedSolve"},
+    {"name":"Simplify Expression", "link":"./buford2/function/?func=simplifyExpression"}
+]
