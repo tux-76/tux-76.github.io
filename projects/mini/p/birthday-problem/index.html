@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>Birthday Problem Simulator</title>
+        <style>
+            body {
+                background-color: black;
+                color: white;
+            }
+
+            #people-list {
+                font-family: monospace;
+            }
+
+            .shared {
+                color: green;
+                background-color: yellow;
+            }
+
+            a {
+                color:lightblue;
+            }
+
+            hr {
+                margin-top: 30px;
+                margin-bottom:30px;
+            }
+        </style>
+    </head>
+    <body>
+        <ol id="people-list"></ol>
+        
+        <div>
+            Calculated Probability: <strong><span id="calculated-probability"></span>%</strong> chance of shared birthday
+            <br>
+            <strong><span id="num-trials"></span></strong> trials, <strong><span id="percent-positive"></span>%</strong> with shared birthday (<strong><span id="percent-error"></span>%</strong> error)
+            <br>
+
+            Number of People: <input type="number" id="num-people" name="Number of People" value="23" min="2" max="50" autocomplete="off">
+            <br>
+
+            <button id="run-once">Run Once</button>
+            <button id="run-100">Run 100</button>
+            <button id="run-1000">Run 1,000</button>
+            <button id="run-1M">Run 1 Million</button>
+            <br>
+            <button id="reset">Reset Trials</button>
+        </div>
+
+        <hr>
+
+        <div id="description">
+            <p>
+                The <a href="https://en.wikipedia.org/wiki/Birthday_problem">birthday problem</a> is one of those counterintuitive statical facts. I discovered it <a href="https://www.chessprogramming.org/Zobrist_Hashing">here</a>  when reading about the probability of hash collsions in a Chess AI. It reads quite simply:
+            </p>
+            <p>
+                If you gather 23 randomly selected people in a room, what is the probability that at least two of them will share a birthday? (Assuming that each of the 365 days have equal probability, excluding leap years for simplicity.)
+            </p>
+            <p>
+                Intuition says the probability is low. After all, it's 23 people out of 365 possible days. But in reality, there is more than a 50% chance that at least two people share a birthday! No tricks!
+            </p>
+            <p>
+                The key here, as Wikipedia explains, is that each pair of the 23 people must be considered.
+                This means the first person would compare with 22 people, the second with 21 (excluding the first), and so on.
+                Mathematically: 22 + 21 + 20 ... 2 + 1 = 253. So, intuition can reason that out of 253 pairs of people, the likelyhood for a single shared birthday is higher.
+            </p>
+            <p>
+                To remove the magic of statistics, I made an emperical proof for the concept. 
+                This program randomly assigns birthdays and compares them.
+                As you run trials, the percentage of shared birthdays will update, and you will see the percentage approach 50.73%, validating the statistical calculations.
+            </p>
+            <p>
+                So, enjoy playing around with this little proof of concept. You may change the number of people and run up to 1 million tests in one click.
+                Also, to give personality to your test subjects, they have randomly generated first and last names :-) (<a href="https://grok.com">Grok</a> very kindly made me a list)
+            </p>
+        </div>
+        <hr>
+        Date: March 18, 2025 <br>
+        Author: Tux-76 <br>
+        <a href="https://tux-76.github.io">Website</a>
+
+        <script src="simulation.js"></script>
+    </body>
+</html>
