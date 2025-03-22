@@ -98,11 +98,16 @@ a:hover {
 .a-list a {
     text-decoration: inherit;
 }
+
+/* LINK COLORS */
 .a-list .fiverr:hover {
     color: #1DBF73;
 }
 .a-list .linkedin:hover {
     color: #0A66C2;
+}
+.a-list .stackoverflow:hover {
+	color: #f48024;
 }
 
 

@@ -1,1 +1,0 @@
-Dont forget to replace your local host with the actual name of the site!!! (tux-76.github.io)
