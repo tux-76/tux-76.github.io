@@ -4,3 +4,6 @@
 [submodule "projects/archive/p/logic-gate-simulator-js"]
 	path = projects/archive/p/logic-gate-simulator-js
 	url = https://github.com/Tux-76-Archive/logic-gate-simulator-js
+[submodule "blog/repo"]
+	path = blog/repo
+	url = https://github.com/tux-76/blog.git

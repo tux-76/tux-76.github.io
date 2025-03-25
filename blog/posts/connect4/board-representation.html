@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>Tux-76 Blog</title>
+		<link rel="stylesheet" href="../../style.css">
+	</head>
+	<body>
+		<h1 id="connect-4-ai-board-representation">Connect-4 AI Board
+Representation</h1>
+<p>In which we discuss the board representation of Connect-4 in an
+artificial intelligence algorithm (AI).</p>
+<h1 id="the-easy-way">The “Easy” Way</h1>
+<p>The first time I made this AI, I created a two dimensional (7x6)
+array to represent the board (<code>char[7][6] board</code>). This is
+the most intuitive representation, as you can get the piece value by
+calling <code>board[x][y]</code>.</p>
+<p>While this design seems simple, it becomes a headache when it comes
+to checking for terminal states (e.g. if a Connect-4 has been made) or
+evaluation (determining how “good” a position is for a player).</p>
+<p>For example, checking for a Connect-4 consists of looping through
+each piece of the board for all 4 directions! 7x6x4 = 168 processes,
+give-or-take, for one game state out of the millions you’ll be
+calculating!</p>
+<p>Clearly this board representation is not satisfactory for an optimal
+AI.</p>
+<h1 id="compressing-a-2d-board">Compressing a 2D board</h1>
+<p>If we know the dimensions of the board, we can easily compress a 2D
+board into a one-dimensional array. All we have to do is correspond the
+index of the 1D array to a value on a 2D model. Here’s an example for a
+Connect-4 board using an array with 42 elements:</p>
+<pre><code>35 36 37 38 39 40 41
+28 29 30 31 32 33 34
+21 22 23 24 25 26 27
+14 15 16 17 18 19 20
+ 7  8  9 10 11 12 13
+ 0  1  2  3  4  5  6</code></pre>
+<p><em>Note: For example only! We will modify this representation
+later!</em></p>
+<p>We can still get the space value from an x,y coordinate pair by
+multiplying <code>y</code> by the width and adding <code>x</code>,
+e.g:</p>
+<p><code>(2, 1) = x + 7y = 9</code> (coordinates from bottom left)</p>
+<p>This helps us limit memory and data complexity, but, if using arrays,
+it doesn’t do us much good for speed.</p>
+<h1 id="the-solution-bitboards">The Solution: Bitboards</h1>
+<p>How abut we do away with arrays completely, and examine a new model:
+bitboards. The concept is simple. Instead of using a single array with a
+value for each space type <em>(e.g. <code>0</code>: Blank |
+<code>1</code>: Player 1 Stone | <code>2</code>: Player 2 Stone)</em> in
+a traditional array as before, we will store everything in two arrays of
+true/false (boolean) values, one for each player. Perhaps an
+illustration will help:</p>
+<p>The game: (with X representing Player 1 and O, Player 2)</p>
+<pre><code>- - - - - - -
+- - - - - - -
+- - - O - - - 
+- - - X - - - 
+- - - O X - -
+- - - X O X -</code></pre>
+<p>Will be represented as:</p>
+<p>Player 1 bitboard (represents Player 1’s pieces):</p>
+<pre><code>0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 1 0 0 0
+0 0 0 0 1 0 0
+0 0 0 1 0 1 0</code></pre>
+<p><code>1</code>: True | <code>0</code>: False</p>
+<p>Player 2 bitboard (represents Player 2’s pieces):</p>
+<pre><code>0 0 0 0 0 0 0
+0 0 0 0 0 0 0
+0 0 0 1 0 0 0
+0 0 0 0 0 0 0
+0 0 0 1 0 0 0
+0 0 0 0 1 0 0</code></pre>
+<p>Here’s the catch: instead of actual arrays, these bitboards will be
+integers. We know that computers represent numbers in binary, and
+luckily our programming languages provide a way to interact with them in
+binary: <a
+href="https://en.wikipedia.org/wiki/Bitwise_operations_in_C">bitwise
+operations</a>.</p>
+<h1 id="win-checking">Win Checking</h1>
+<p>Let’s start by designing the algorithm for checking if a Connect-4
+has been made, signaling a win. We will go into more detail later, but
+the concept will help us design our board representation.</p>
+<h2 id="the-idea">The Idea</h2>
+<p>What makes a Connect-4? We can conjecture that <strong>a Connect-4
+has been made if any piece has 3 consecutively adjacent neighbors in the
+same direction.</strong></p>
+<p>Let’s look at a row of the board:</p>
+<p><code>0 0 1 1 1 1 0</code></p>
+<p>If we perform a right bitshift of 1 (<code>&gt;&gt; 1</code>), it
+becomes</p>
+<p><code>0 1 1 1 1 0 0</code>.</p>
+<p><em>Notice how the right bitshift actually has the effect of shifting
+the row left. This is because numbers are read with the first digit on
+the right, wheras in our board the first digit is on the left.</em> If
+we compare the two integers with an AND operation:</p>
+<pre><code>b = player&#39;s bitboard
+
+b &amp; (b &gt;&gt; 1)
+  0 0 1 1 1 1 0
+&amp; 0 1 1 1 1 0 0
+= 0 0 1 1 1 0 0</code></pre>
+<p>Our new bitboard represents all the bits with a neighbor to the
+right. It’s asking, “If I shift the board over, will there still be a 1
+in my place?” You can also think of it as finding all the
+“Connect-2s”.</p>
+<p>A Connect-4 is made when two “Connect-2s” are together. In other
+words, if I have a neighbor and the piece two spaces to the right also
+has a neighbor, it is a Connect-4.</p>
+<pre><code>n = last output (all pieces with neighbors to the right)
+
+n &amp; (n &gt;&gt; 2)
+  0 0 1 1 1 0 0
+&amp; 1 1 1 0 0 0 0
+= 0 0 1 0 0 0 0</code></pre>
+<p>And there we have it! <code>n</code> represents all pieces with three
+consecutively adjacent neighbors. Win checking is simple, if
+<code>n</code> is equal to 0 (all bits are 0, meaning no pieces meet the
+definition), then the game continues (assuming the board is not full,
+which we will get to later). If <code>n</code> is greater than 0, it
+means there is a 1 somewhere in our bitboard, and a win exists.</p>
+<p>Of course, we have only checked the horizontal direction so far, but
+more on the other directions soon!</p>
+<h2 id="the-benefits">The Benefits</h2>
+<p>The benefit this method presents over the others is huge. Shifting
+and comparing bits is a low-level, easy function for a CPU <em>(your
+microwave can probably do bitshifts!)</em>, much easier than a for
+loop.</p>
+<h2 id="a-pretty-big-problem">A Pretty Big Problem</h2>
+<p>The only thing is, we have a pretty big problem with our win-checking
+system now. Remember that our bitboard is a one-dimensional binary
+number that is made to represent a two-dimensional board. Now consider
+the first two rows of this bitboard:</p>
+<pre><code>1 1 0 0 0 0 0
+0 0 0 0 0 1 1</code></pre>
+<p>Clearly no Connect-4s here. But our program sees it as:</p>
+<p><code>0 0 0 0 0 1 1 1 1 0 0 0 0 0</code></p>
+<p>Now that looks like a Connect-4, and our algorithm will think it is.
+We need a way to separate the rows.</p>
+<h1 id="better-board-representation">Better Board Representation</h1>
+<p>All we need to do is add a <a
+href="https://en.wikipedia.org/wiki/Sentinel_value">sentinel</a> column
+to act as a sort of “air-gap” between rows. You can also think of it as
+adding an unused column that will always be empty, so that Connect-4s
+won’t happen across rows. Here’s how that looks:</p>
+<pre><code>C0   C1  C2  C3  C4  C5  C6 Sent
+
+[47][48][49][50][51][52][53][54]
+ 40  41  42  43  44  45  46 [46]
+ 32  31  32  33  34  35  36 [39]
+ 24  25  26  27  28  29  30 [31]
+ 16  17  18  19  20  21  22 [23]
+  8   9  10  11  12  13  14 [15]
+  0   1   2   3   4   5   6 [ 7]</code></pre>
+<p>Sentinel values are denoted by the brackets(<code>[]</code>) around
+them. I have also added a row of sentenial values at the top, which
+doesn’t change anything but will help us conceptualize our
+move-generation algorithm later.</p>
+<p>Now, as long as we are careful to make sure that our sentinals are
+always 0, we won’t have the issue of wrapping.</p>
+<h1 id="c-application">C++ Application</h1>
+<p>Although I covered the concept of win-checking here, the next post
+will go into more depth, so I will limit this application to the actual
+board representation.</p>
+<p>The best data type for your bitboards is going to be a
+<code>uint64_t</code>. This is faster than an int because it is smaller,
+only including 64 bits.</p>
+<p>We will also have an array <code>uint64_t[7]</code> to store the
+locations of the next piece on the bitboard per column. More on this in
+the next post.</p>
+<hr />
+<p>Title: Connect-4 AI Board Representation</p>
+<p>Author: Tux-76</p>
+<p>Date: March 12, 2025 ___</p>
+	</body>
+</html>

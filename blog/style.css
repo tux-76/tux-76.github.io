@@ -1,0 +1,17 @@
+body {
+	background-color: black;
+
+	color: white;
+	font-family:sans;
+	text-rendering: optimizeLegibility;
+	text-align:center;
+}
+
+p {
+	max-width:1000px;
+	margin: 21px auto;
+
+	text-align:justify;
+	font-size:18px;
+	line-height: 1.4;
+}
