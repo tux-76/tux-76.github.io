@@ -9,9 +9,47 @@ body {
 
 p {
 	max-width:1000px;
-	margin: 21px auto;
+	margin: 0px auto;
+	margin-bottom: 15px;
 
 	text-align:justify;
 	font-size:18px;
 	line-height: 1.4;
+}
+
+h2 {
+	max-width:1000px;
+	margin-left: auto;
+	margin-right: auto;
+	text-align:left;
+}
+
+a {
+	text-decoration: underline;
+	color:white;
+}
+a:hover {
+	text-decoration: none;
+	color:gray;
+}
+
+/* Code formatting */
+pre {
+	max-width:1000px;
+	margin: 21px auto;
+	padding:10px;
+	border-radius:5px;
+
+	font-size:18px;
+	text-align: left;
+}
+pre, code {
+	color: orange;
+	background-color:rgb(77, 76, 76);
+}
+code:not(pre code) {
+	border-radius:4px;
+	padding-top:4px;
+	padding-left:4px;
+	padding-right:4px;
 }
